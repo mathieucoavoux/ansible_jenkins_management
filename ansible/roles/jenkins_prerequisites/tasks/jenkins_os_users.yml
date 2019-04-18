@@ -1,0 +1,17 @@
+---
+# Jenkins dependencies create user and group
+# Author: Mathieu Coavoux
+# Created : 14 April 2019
+# Licence: MIT
+# Description:
+#               Create user and group
+
+- name: "Create group"
+  group:
+    name: "{{launch_group}}"
+    state: present
+
+- name: "Create user"
+  user:
+      name: "{{launch_user}}"
+      group: "{{launch_group}}"

@@ -1,0 +1,24 @@
+---
+#Input:
+#   ENV_SERVER_RESTART=yes
+#Install or Update plugin
+- include_vars: "roles/jenkins_update/vars/update_plugin.yml"
+
+- name: "Download Jenkins CLI"
+  get_url:
+    url: "{{jenkins_cli_url}}"
+    dest: "{{jenkins_home_directory}}/{{jenkins_cli_jar}}"
+
+- name: "Check if plugin {{item.name}} is installed"
+  shell: |
+    {{java_home}}/bin/java -jar {{jenkins_home_directory}}/{{jenkins_cli_jar}} -s {{jenkins_master_url}} list-plugins {{item.name}}
+  ignore_errors: True
+  register: chk_plugins
+  with_items:
+    - "{{jenkins_plugins}}"
+
+- name: "Update or install {{item.name}}"
+  shell: |
+    {{java_home}}/bin/java -jar {{jenkins_home_directory}}/{{jenkins_cli_jar}} -s {{jenkins_master_url}} install-plugin {{item.name}} {{jenkins_cli_opts}}
+  with_items:
+    - "{{chk_plugins|json_query(jq_plugin_installed)}}"

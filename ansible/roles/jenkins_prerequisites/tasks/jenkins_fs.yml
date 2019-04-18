@@ -1,0 +1,15 @@
+---
+# Jenkins dependencies create FS
+# Author: Mathieu Coavoux
+# Created : 14 April 2019
+# Licence: MIT
+# Description:
+#               Create all filesystems
+- name: "Create FS {{item.name}}"
+  file:
+    path: "{{item.path}}"
+    state: directory
+    owner: "{{launch_user}}"
+    group: "{{launch_group}}"
+  with_items:
+    - "{{filesystems}}"

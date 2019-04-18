@@ -1,0 +1,32 @@
+---
+#Convenient variables for FS
+jenkins_home_directory: "{{filesystems|json_query(jq_fs_home)}}"
+jenkins_etc_directory: "{{filesystems|json_query(jq_fs_etc)}}"
+jenkins_etc_bin_directory: "{{filesystems|json_query(jq_fs_etc)}}"
+jenkins_etc_sysconfig_directory: "{{filesystems|json_query(jq_fs_etc)}}"
+jenkins_var_run_directory: "{{filesystems|json_query(jq_fs_var_run)}}"
+jenkins_cache_directory: "{{filesystems|json_query(jq_fs_cache)}}"
+jenkins_log_directory: "{{filesystems|json_query(jq_fs_log)}}"
+jenkins_tmp_directory: "{{filesystems|json_query(jq_fs_tmp)}}"
+
+#Convenient variables for configuration
+launch_user: "{{jvm_configuration.launch_user|default(default_launch_user)}}"
+launch_group: "{{jvm_configuration.launch_group|default(default_launch_group)}}"
+java_home: "{{jvm_configuration.java_home|default(default_java_home)}}"
+jenkins_debug_level: "{{jvm_configuration.debug_level|default(default_debug_level)}}"
+jenkins_enable_access_log: "{{jvm_configuration.enable_access_log|default(default_enable_access_log)}}"
+jenkins_handler_max: "{{jvm_configuration.handler_max|default(default_handler_max)}}"
+jenkins_handler_idle: "{{jvm_configuration.handler_idle|default(default_handler_idle)}}"
+jenkins_suffix_url: "{{jvm_configuration.suffix_url|default(default_suffix_url)}}"
+#If http is not set then take the default http port value
+master_http_port: "{{jenkins_masters|json_query(jq_jm_http_port)}}"
+jenkins_http_port: "{%if master_http_port != '' %}{{master_http_port}}{%else%}{{default_ports.http}}{%endif%}"
+#If https is not set then take the default https port value
+master_https_port: "{{jenkins_masters|json_query(jq_jm_https_port)}}"
+jenkins_https_port: "{%if master_http_port != '' %}{{master_https_port}}{%else%}{{default_ports.https}}{%endif%}"
+#Take the default channel and use its name as the protocol
+custom_channel: "{{jenkins_masters|json_query(jq_jm_default_channel)}}"
+jenkins_master_channel: "{%if custom_channel != '' %}{{custom_channel}}{%else%}{{default_channel}}{%endif%}"
+jenkins_default_port: "{%if jenkins_master_channel == 'https' %}{{jenkins_https_port}}{%else%}{{jenkins_http_port}}{%endif%}"
+jenkins_master_url: "{{jenkins_master_channel}}://{{ansible_hostname}}:{{jenkins_default_port}}{{jenkins_suffix_url}}"
+jenkins_cli_url: "{{jenkins_master_url}}/{{jenkins_cli_suffix}}/{{jenkins_cli_jar}}"

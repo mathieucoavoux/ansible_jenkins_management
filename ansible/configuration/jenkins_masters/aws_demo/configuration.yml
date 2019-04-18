@@ -1,0 +1,60 @@
+---
+jenkins_version: "2.164.1"
+jenkins_masters:
+  - name: "master1"
+    hostname: "master1"
+    http_port: "8081"
+    default_channel: "http"
+
+jenkins_plugins:
+  - name: "git"
+    version: "3.9.3"
+  - name: "configuration-as-code"
+    version: "1.11"
+  - name: "configuration-as-code-support"
+    version: "1.11"
+  - name: "job-dsl"
+    version: "1.72"
+
+
+
+filesystems:
+  - name: "log"
+    path: "/var/log/jenkins"
+  - name: "etc"
+    path: "/opt/jenkins/etc"
+  - name: "etc_init"
+    path: "/opt/jenkins/etc/init.d"
+  - name: "etc_conf"
+    path: "/opt/jenkins/etc/conf"
+  - name: "etc_bin"
+    path: "/opt/jenkins/etc/bin"
+  - name: "etc_sysconfig"
+    path: "/opt/jenkins/etc/sysconfig"
+  - name: "cache"
+    path: "/opt/jenkins/cache"
+  - name: "home"
+    path: "/opt/jenkins/home"
+  - name: "var_run"
+    path: "/var/run"
+  - name: "tmp"
+    path: "/opt/jenkins/tmp"
+  - name: "user_home"
+    path: "/home/ec2-user"
+
+jenkins_credentials_store: "system::system:::jenkins"
+jenkins_credentials:
+  - domain_name: "domain1"
+    credentials:
+      - file_name: "secret1"
+        path: "/configuration/jenkins_masters/aws_demo/secrets.yml"
+
+jvm_configuration:
+  launch_user: "ec2-user"
+  launch_group: "ec2-user"
+  debug_level: 5
+  enable_access_log: "no"
+  handler_max: 100
+  handler_idle: 20
+  suffix_url: "/jenkins"
+

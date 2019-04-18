@@ -1,0 +1,58 @@
+---
+# Keep Jenkins master updated
+# Author: Mathieu Coavoux
+# Created : 12 April 2019
+# Licence: MIT
+# Description:  Ansible script which keep the Jenkins master updated
+#               This process is reading a configuration file to see which version of Jenkins we want and others configuration.
+#               Then apply the configuration.
+#               This is a non-destructive process.
+
+- name: "Check if secret file exists"
+  stat:
+    path: "configuration/jenkins_masters/{{ENV_MASTER_TYPE}}/secrets.yml"
+  register: chk_configuration
+
+- include_vars: "configuration/jenkins_masters/{{ENV_MASTER_TYPE}}/secrets.yml"
+  when: chk_configuration.stat.exists == true
+
+#Download Jenkins WAR
+#The url can be replaced by a local server
+- name: "Download Jenkins WAR"
+  get_url:
+    url: "{{jenkins_war_url}}"
+    dest: "{{jenkins_home_directory}}/{{jenkins_war}}"
+
+- name: "Copy functions.sh script"
+  template:
+    src: "roles/jenkins_update/templates/functions.sh.j2"
+    dest: "{{jenkins_etc_directory}}/init.d/functions.sh"
+
+- name: "Create or update Keystore if a certificate exists"
+  import_role:
+    name: jenkins_certificates
+  vars:
+    keystore: "create_update"
+  when: jenkins_certificates is defined and jenkins_certificates.cert is defined and jenkins_certificates.key is defined and jenkins_certificates.keystore_password is defined
+
+- name: "Copy jenkins.sh script"
+  template:
+    src: "roles/jenkins_update/templates/jenkins.sh.j2"
+    dest: "{{jenkins_etc_directory}}/init.d/jenkins.sh"
+    mode: u+x
+
+- name: "Copy sysconfig_jenkins.sh script"
+  template:
+    src: "roles/jenkins_update/templates/sysconfig_jenkins.sh.j2"
+    dest: "{{jenkins_etc_directory}}/sysconfig/jenkins"
+
+- name: "Check if Jenkins is started"
+  shell: |
+    {{jenkins_etc_directory}}/init.d/jenkins.sh status
+  register: chk_jenkins_status
+  ignore_errors: yes
+
+- name: "Start Jenkins for the first time"
+  shell: |
+    {{jenkins_etc_directory}}/init.d/jenkins.sh start
+  when: chk_jenkins_status.stdout is match("STOPPED.*")

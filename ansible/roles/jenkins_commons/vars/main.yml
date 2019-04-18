@@ -1,0 +1,41 @@
+---
+#Jenkins war related variables
+jenkins_repo_url: "http://mirrors.jenkins.io/war-stable"
+jenkins_war: "jenkins.war"
+jenkins_war_url: "{{jenkins_repo_url}}/{{jenkins_version}}/{{jenkins_war}}"
+
+jenkins_cli_jar: "jenkins-cli.jar"
+jenkins_cli_suffix: "jnlpJars"
+
+#All queries of the configuration files
+##FS
+jq_fs_home: "[?name=='home'].path|[0]"
+jq_fs_etc: "[?name=='etc'].path|[0]"
+jq_fs_etc_bin: "[?name=='etc_bin'].path|[0]"
+jq_fs_etc_sysconfig: "[?name=='etc_sysconfig'].path|[0]"
+jq_fs_var_run: "[?name=='var_run'].path|[0]"
+jq_fs_cache: "[?name=='cache'].path|[0]"
+jq_fs_log: "[?name=='log'].path|[0]"
+jq_fs_tmp: "[?name=='tmp'].path|[0]"
+##jenkins_masters
+###Take the http_port of the current host
+jq_jm_http_port: "[?hostname=='{{ansible_hostname}}'].http_port|[0]"
+###Take the https_port of the current host
+jq_jm_https_port: "[?hostname=='{{ansible_hostname}}'].https_port|[0]"
+###Take the default channel
+jq_jm_default_channel: "[?hostname=='{{ansible_hostname}}'].default_channel|[0]"
+
+#Standard configuration
+jenkins_log_file: "$(date +%Y%m%d_%H%M%S).log"
+default_java_home: "/etc/alternatives/jre_1.8.0"
+default_launch_user: "jenkins"
+default_launch_group: "jenkins"
+default_debug_level: 5
+default_enable_access_log: "no"
+default_handler_max: 100
+default_handler_idle: 20
+default_channel: "http"
+default_ports:
+  http: "8080"
+  https: "8443"
+default_suffix_url: "jenkins"
