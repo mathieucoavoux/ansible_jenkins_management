@@ -30,3 +30,7 @@ jenkins_master_channel: "{%if custom_channel != '' %}{{custom_channel}}{%else%}{
 jenkins_default_port: "{%if jenkins_master_channel == 'https' %}{{jenkins_https_port}}{%else%}{{jenkins_http_port}}{%endif%}"
 jenkins_master_url: "{{jenkins_master_channel}}://{{ansible_hostname}}:{{jenkins_default_port}}{{jenkins_suffix_url}}"
 jenkins_cli_url: "{{jenkins_master_url}}/{{jenkins_cli_suffix}}/{{jenkins_cli_jar}}"
+
+#cert
+jenkins_has_certificate: "{%if jenkins_certificates is defined and jenkins_certificates.json_query(jq_cert_length) != '' %}true{%else%}false{%endif%}"
+

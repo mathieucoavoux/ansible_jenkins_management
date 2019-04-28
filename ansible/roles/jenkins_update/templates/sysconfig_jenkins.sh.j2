@@ -105,7 +105,7 @@ JENKINS_HTTPS_KEYSTORE=""
 # Default is disabled.
 #
 {%if jenkins_certificates is defined and jenkins_certificates.keystore_password is defined %}
-JENKINS_HTTPS_KEYSTORE_PASSWORD="{{jenkins_certificates.keystore_password}}"
+JENKINS_HTTPS_KEYSTORE_PASSWORD="{{jenkins_certificates|json_query(jq_cert_keystore_password)}}"
 {%else%}
 JENKINS_HTTPS_KEYSTORE_PASSWORD=""
 {%endif%}

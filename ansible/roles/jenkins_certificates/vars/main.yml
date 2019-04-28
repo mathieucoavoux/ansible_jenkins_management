@@ -1,0 +1,32 @@
+---
+jq_cert_country: "[?hostname=='{{ansible_hostname}}'].cert_country|[0]"
+jq_cert_state: "[?hostname=='{{ansible_hostname}}'].cert_state|[0]"
+jq_cert_location: "[?hostname=='{{ansible_hostname}}'].cert_location|[0]"
+jq_cert_organization: "[?hostname=='{{ansible_hostname}}'].cert_organization|[0]"
+jq_cert_unit: "[?hostname=='{{ansible_hostname}}'].cert_unit|[0]"
+jq_cert_cn: "[?hostname=='{{ansible_hostname}}'].cert_cn|[0]"
+jq_cert_validity: "[?hostname=='{{ansible_hostname}}'].cert_validity|[0]"
+
+#Rsa size
+jenkins_cert_rsa_size: "{{ENV_RSA_SIZE|default('2048')}}"
+#jenkins_cert_validity: "{{ENV_VALIDITY|default('365')}}"
+jenkins_cert_key_name: "{{ansible_hostname}}.key"
+jenkins_cert_cert_name: "{{ansible_hostname}}.crt"
+jenkins_cert_pfx_name: "{{ansible_hostname}}.pfx"
+
+
+jenkins_cert_country: "{% if jenkins_certificates|json_query(jq_cert_country) == '' %}{{ENV_COUNTRY}}{%else%}{{jenkins_certificates|json_query(jq_cert_country)}}{%endif%}"
+jenkins_cert_state: "{% if jenkins_certificates|json_query(jq_cert_state) == '' %}{{ENV_STATE}}{%else%}{{jenkins_certificates|json_query(jq_cert_state)}}{%endif%}"
+jenkins_cert_location: "{% if jenkins_certificates|json_query(jq_cert_location) == '' %}{{ENV_LOCATION}}{%else%}{{jenkins_certificates|json_query(jq_cert_location)}}{%endif%}"
+jenkins_cert_organization: "{% if jenkins_certificates|json_query(jq_cert_organization) == '' %}{{ENV_ORGANIZATION}}{%else%}{{jenkins_certificates|json_query(jq_cert_organization)}}{%endif%}"
+jenkins_cert_unit: "{% if jenkins_certificates|json_query(jq_cert_unit) == '' %}{{ENV_UNIT}}{%else%}{{jenkins_certificates|json_query(jq_cert_unit)}}{%endif%}"
+jenkins_cert_cn: "{% if jenkins_certificates|json_query(jq_cert_unit) == '' %}{{ENV_CN}}{%else%}{{jenkins_certificates|json_query(jq_cert_cn)}}{%endif%}"
+jenkins_cert_validity: "{% if jenkins_certificates|json_query(jq_cert_validity) == '' %}365{%else%}{{jenkins_certificates|json_query(jq_cert_cn)}}{%endif%}"
+
+default_days_expiration_notification: "10"
+
+jenkins_days_expiration_notification: "{{jenkins_certificates.days_expiration_notification|default(default_days_expiration_notification)}}"
+jenkins_seconds_expiration_notification: "{{ 86400 * jenkins_days_expiration_notification|int }}"
+
+#Shall move somewhere else
+default_keystore_password: "mypassword"

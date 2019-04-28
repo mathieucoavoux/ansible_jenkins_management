@@ -58,3 +58,15 @@ jvm_configuration:
   handler_idle: 20
   suffix_url: "/jenkins"
 
+maintenance_windows:
+  - name: "Monday maintenance"
+    type: "weekday"
+    day: "Monday"
+    start_time: "02:00:00"
+    end_time: "03:00:00"
+  - name: "Last sunday maintenance"
+    type: "weekdayofmonth"
+    day: "Sunday"
+    keyword: "last"
+    start_time: "08:00:00"
+    end_time: "20:00:00"

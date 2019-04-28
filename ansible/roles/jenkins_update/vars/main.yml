@@ -1,0 +1,4 @@
+---
+restart_flag: ".restart.flag"
+
+jq_maintenance: "[?stdout=='yes'].stdout|[0]"

@@ -1,0 +1,38 @@
+#Check if jenkins can restart at this time
+
+# maintenance_windows:
+#   - name: "Monday maintenance"
+#     type: "weekday"
+#     day: "Monday"
+#     start_time: "02:00:00"
+#     end_time: "03:00:00"
+#
+#   - name: "Last sunday maintenance"
+#     type: "weekdayofmonth"
+#     day: "Sunday"
+#     keyword: "last"
+#     start_time: "02:00:00"
+#     end_time: "03:00:00"
+
+- name: "Copy script"
+  copy:
+    src: "roles/jenkins_update/files/check_date_time_range.sh"
+    dest: "{{ENV_FOLDER}}/check_date_time_range.sh"
+    mode: u+x
+
+- name: "Check the maintenance is in time range"
+  shell: |
+    {{ENV_FOLDER}}/check_date_time_range.sh -s {{item.start_time}} -e {{item.end_time}} -r {{item.day|lower}} -k {{item.keyword|default('')|lower}} -w {{ansible_date_time.weekday|lower}}
+  with_items:
+    - "{{maintenance_windows}}"
+  register: chk_maintenance
+  when: ENV_MASTER_RESTARTABLE is not defined or ENV_MASTER_RESTARTABLE != 'true'
+
+- debug:
+    msg: "{{chk_maintenance.results|json_query(jq_maintenance)}}"
+
+- set_fact:
+    jenkins_is_restartable: "{%if (ENV_MASTER_RESTARTABLE is defined and ENV_MASTER_RESTARTABLE == 'true') or chk_maintenance.results|json_query(jq_maintenance) == 'yes' %}yes{%else%}no{%endif%}"
+
+- debug:
+    msg: "Jenkins is restartable: {{jenkins_is_restartable}}"

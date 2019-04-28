@@ -24,6 +24,11 @@ jq_jm_http_port: "[?hostname=='{{ansible_hostname}}'].http_port|[0]"
 jq_jm_https_port: "[?hostname=='{{ansible_hostname}}'].https_port|[0]"
 ###Take the default channel
 jq_jm_default_channel: "[?hostname=='{{ansible_hostname}}'].default_channel|[0]"
+##Certificates
+jq_cert_length: "[?hostname=='{{ansible_hostname}}']"
+jq_cert_cert: "[?hostname=='{{ansible_hostname}}'].cert|[0]"
+jq_cert_key: "[?hostname=='{{ansible_hostname}}'].key|[0]"
+jq_cert_keystore_password: "[?hostname=='{{ansible_hostname}}'].keystore_password|[0]"
 
 #Standard configuration
 jenkins_log_file: "$(date +%Y%m%d_%H%M%S).log"
@@ -39,3 +44,5 @@ default_ports:
   http: "8080"
   https: "8443"
 default_suffix_url: "jenkins"
+
+jenkins_keystore_file: "{{ansible_hostname}}.pfx"

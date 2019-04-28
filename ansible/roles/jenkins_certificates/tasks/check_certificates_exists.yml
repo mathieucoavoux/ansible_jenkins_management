@@ -1,0 +1,4 @@
+#This can be reviewed to take the certificate from a KMS or somewhere else
+
+- set_fact:
+    jenkins_certificate_source_exists: "{%if jenkins_certificates|json_query(jq_cert_cert) != '' and jenkins_certificates|json_query(jq_cert_key) != ''%}true{%else%}false{%endif%}"

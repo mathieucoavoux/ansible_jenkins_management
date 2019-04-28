@@ -9,10 +9,13 @@
 #     ENV_MASTER_RESTARTABLE: default value False. If set to true Jenkins can restart at the end
 #     ENV_MASTER_TYPE: type of the master which shall be updated
 
-- import_tasks: "roles/jenkins_update/tasks/update_core.yml"
+- include_tasks: "roles/jenkins_update/tasks/update_core.yml"
   when: (update_core is defined and update_core == "yes") or
         (keep_updated is defined and keep_updated == "yes")
 
-- import_tasks: "roles/jenkins_update/tasks/update_plugin.yml"
+- include_tasks: "roles/jenkins_update/tasks/update_plugin.yml"
   when: (update_plugin is defined and update_plugin == "yes") or
         (keep_updated is defined and keep_updated == "yes")
+
+- include_tasks: "roles/jenkins_update/tasks/jenkins_is_restartable.yml"
+  when: jenkins_check_restartable is defined and jenkins_check_restartable == "yes"

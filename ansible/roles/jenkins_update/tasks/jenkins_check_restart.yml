@@ -1,0 +1,9 @@
+---
+#Check if jenkins needs to be restarted
+- name: "Check if restart flag exists"
+  stat:
+    path: "{{jenkins_home_directory}}/{{restart_flag}}"
+  register: chk_restart_flag
+
+- set_fact:
+    jenkins_restart_required: "{{chk_restart_flag.stat.exists}}"

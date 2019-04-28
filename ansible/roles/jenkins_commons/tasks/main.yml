@@ -21,6 +21,14 @@
 - include_vars: "configuration/jenkins_masters/{{ENV_MASTER_TYPE}}/configuration.yml"
 
 
+- name: "Check if secret file exists"
+  stat:
+    path: "configuration/jenkins_masters/{{ENV_MASTER_TYPE}}/secrets.yml"
+  register: chk_configuration
+
+- include_vars: "configuration/jenkins_masters/{{ENV_MASTER_TYPE}}/secrets.yml"
+  when: chk_configuration.stat.exists == true
+
 #Include *dynamic* variables files to avoid parsing the files too many times
 - include_vars: "roles/jenkins_commons/vars/aliases.yml"
 
