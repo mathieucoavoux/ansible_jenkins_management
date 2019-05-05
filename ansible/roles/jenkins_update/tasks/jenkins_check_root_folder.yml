@@ -1,0 +1,9 @@
+---
+- name: "Check if root folder exist"
+  shell: |
+    {{jenkins_cli_cde}} list-jobs | grep -q ^{{jenkins_root_folder}}$ && echo "OK" || echo "KO"
+  register: chk_root_folder
+  when: jenkins_root_folder is defined
+
+- set_fact:
+    jenkins_root_folder_exists: "{% if jenkins_root_folder is defined and chk_root_folder.stdout == 'OK' %}yes{%else%}no{%endif%}"

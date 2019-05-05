@@ -1,0 +1,104 @@
+---
+- debug:
+    msg: "Variable before: {{jenkins_start_restart|default('not set')}}"
+
+- name: "Check if jenkins needs to be restarted before starting operations"
+  include_role:
+    name: jenkins_cycle
+  vars:
+    jenkins_check_restart: "yes"
+  when: jenkins_is_installed == true
+
+- debug:
+    msg: "Variable after: {{jenkins_start_restart|default('not set')}}"
+
+
+- name: "Start or restart Jenkins when required"
+  include_role:
+    name: jenkins_cycle
+  vars:
+    jenkins_start_restart: "yes"
+  when: jenkins_is_installed == true and jenkins_restart_required == true
+
+- name: "Stop operations now as jenkins needs to be restarted but cannot"
+  meta: end_play
+  when: jenkins_is_installed == true and jenkins_restart_required == true and jenkins_has_restarted == "no"
+
+- name: "Check if we have the latest version"
+  include_tasks: "roles/jenkins_update/tasks/jenkins_check_version.yml"
+  when: jenkins_is_installed == true
+
+- name: "Update the version if this is not the latest"
+  include_tasks: "roles/jenkins_update/tasks/jenkins_update_war.yml"
+  when: jenkins_is_installed == false or jenkins_update_required == "yes"
+
+- name: "Keep core files up-to-date"
+  include_tasks: "roles/jenkins_update/tasks/update_core.yml"
+
+- name: "Configure certificate"
+  include_role:
+    name: jenkins_certificates
+  vars:
+    keep_latest: "yes"
+
+- name: "Start or restart Jenkins when required"
+  include_role:
+    name: jenkins_cycle
+  vars:
+    jenkins_start_restart: "yes"
+  when: jenkins_restart_required == true
+
+- fail:
+    msg: "Jenkins is not available"
+  when: jenkins_is_available == false
+
+#Mark jenkins as installed now
+- set_fact:
+    jenkins_is_installed: "yes"
+
+- name: "Stop operations now as jenkins needs to be restarted but cannot"
+  meta: end_play
+  when: jenkins_restart_required == true and jenkins_has_restarted == "no"
+
+- name: "Update plugin"
+  include_tasks: "roles/jenkins_update/tasks/update_plugin.yml"
+
+- name: "Check root folder exists"
+  include_tasks: "roles/jenkins_update/tasks/jenkins_check_root_folder.yml"
+
+#This script is supposed to execute the first time Jenkins has been started
+#If this is not the case it may fail if the CLI remote option is disabled
+- name: "Create root core folder first"
+  include_tasks: "roles/jenkins_update/tasks/jenkins_create_root_folder.yml"
+  when: jenkins_root_folder is defined and jenkins_root_folder_exists == "no"
+
+#Update credentials after installing the plugin as some credential type may requires a plugin to be installed
+- name: "Create or update core credentials"
+  include_role:
+    name: jenkins_credentials
+  vars:
+    jc_secret_file: "{{jenkins_credential.path}}"
+
+#Save a restart
+#Check or update casc plugin now
+#Kickstart job:
+#         --> Create JobDSL job in Admin:
+#               --> Read ROOT_FOLDERS variable: create root folders if they don t exist
+#               --> Executed every 5 mins
+#         --> Create a Synchronize pipeline job in Admin
+#               --> called if jobdsl job is sucessful
+#               --> Call an ansible job create_credentials (parallel with all ROOT_FOLDERS)
+#                     -e Repo=REPO+'_'+FOLDER
+#         --> Create jobDSL  job in Admin which create all jobs + folders for all ROOT_FOLDERS
+
+- name: "Start or restart Jenkins when required"
+  include_role:
+    name: jenkins_cycle
+  vars:
+    jenkins_start_restart: "yes"
+  when: jenkins_restart_required == true
+
+- name: "Stop operations now as jenkins needs to be restarted but cannot"
+  meta: end_play
+  when: jenkins_restart_required == true and jenkins_has_restarted == "no"
+

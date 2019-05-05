@@ -1,0 +1,15 @@
+---
+#Download Jenkins WAR
+#The url can be replaced by a local server
+- name: "Download Jenkins WAR"
+  get_url:
+    url: "{{jenkins_war_url}}"
+    dest: "{{jenkins_home_directory}}/{{jenkins_war}}"
+
+- include_role:
+    name: jenkins_cycle
+  vars:
+    jenkins_set_restart_flag: "yes"
+
+- debug:
+    msg: "Restart required: {{jenkins_restart_required}}"

@@ -1,0 +1,15 @@
+
+- include_tasks: "roles/jenkins_cycle/tasks/jenkins_is_restartable.yml"
+  when: jenkins_check_restartable is defined and jenkins_check_restartable == "yes"
+
+- include_tasks: "roles/jenkins_cycle/tasks/jenkins_check_restart.yml"
+  when: jenkins_check_restart is defined and jenkins_check_restart == "yes"
+
+- include_tasks: "roles/jenkins_cycle/tasks/jenkins_set_restart_flag.yml"
+  when: jenkins_set_restart_flag is defined and jenkins_set_restart_flag == "yes"
+
+- include_tasks: "roles/jenkins_cycle/tasks/jenkins_start_or_restart.yml"
+  when: jenkins_start_restart is defined and jenkins_start_restart == "yes"
+
+- include_tasks: "roles/jenkins_cycle/tasks/jenkins_status_login.yml"
+  when: jenkins_status_login is defined and jenkins_status_login == "yes"

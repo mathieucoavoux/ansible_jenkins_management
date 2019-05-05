@@ -1,0 +1,6 @@
+---
+#Suffix for the Jenkins url
+##Used by:
+#jenkins_suffix_url: "jenkins"
+
+jc_default_store_id: "system::system::jenkins"

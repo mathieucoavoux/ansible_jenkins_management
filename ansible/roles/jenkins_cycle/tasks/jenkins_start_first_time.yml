@@ -1,0 +1,10 @@
+- name: "Start Jenkins"
+  shell: |
+    {{jenkins_etc_directory}}/init.d/jenkins.sh start
+  register: chk_start
+  environment:
+    JENKINS_DISABLE_WIZARD: "-Djenkins.install.runSetupWizard=false"
+
+- fail:
+    msg: "Cannot start jenkins"
+  when: chk_start.rc != 0

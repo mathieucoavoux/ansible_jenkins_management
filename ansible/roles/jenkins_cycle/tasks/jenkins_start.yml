@@ -1,0 +1,8 @@
+- name: "Start Jenkins"
+  shell: |
+    {{jenkins_etc_directory}}/init.d/jenkins.sh start
+  register: chk_start
+
+- fail:
+    msg: "Cannot start jenkins"
+  when: chk_start.rc != 0

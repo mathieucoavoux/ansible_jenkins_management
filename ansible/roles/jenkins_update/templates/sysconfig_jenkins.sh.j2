@@ -55,7 +55,7 @@ JENKINS_USER="{{launch_user}}"
 #
 # Options to pass to java when running Jenkins.
 #
-JENKINS_JAVA_OPTIONS="-Djava.awt.headless=true {%if jenkins_is_installed == 'false'%}-Djenkins.install.runSetupWizard=false{%endif%}"
+JENKINS_JAVA_OPTIONS="-Djava.awt.headless=true $JENKINS_DISABLE_WIZARD"
 
 ## Type:        integer(0:65535)
 ## Default:     8080
@@ -73,7 +73,7 @@ JENKINS_PORT="{{jenkins_http_port}}"
 # IP address Jenkins listens on for HTTP requests.
 # Default is all interfaces (0.0.0.0).
 #
-JENKINS_LISTEN_ADDRESS=""
+JENKINS_LISTEN_ADDRESS="{{ansible_hostname}}"
 
 ## Type:        integer(0:65535)
 ## Default:     ""
@@ -104,8 +104,8 @@ JENKINS_HTTPS_KEYSTORE=""
 # Password to access the keystore defined in JENKINS_HTTPS_KEYSTORE.
 # Default is disabled.
 #
-{%if jenkins_certificates is defined and jenkins_certificates.keystore_password is defined %}
-JENKINS_HTTPS_KEYSTORE_PASSWORD="{{jenkins_certificates|json_query(jq_cert_keystore_password)}}"
+{%if jenkins_certificates is defined and jenkins_keystore_password != '' %}
+JENKINS_HTTPS_KEYSTORE_PASSWORD="{{jenkins_keystore_password}}"
 {%else%}
 JENKINS_HTTPS_KEYSTORE_PASSWORD=""
 {%endif%}
@@ -117,7 +117,7 @@ JENKINS_HTTPS_KEYSTORE_PASSWORD=""
 # IP address Jenkins listens on for HTTPS requests.
 # Default is disabled.
 #
-JENKINS_HTTPS_LISTEN_ADDRESS=""
+JENKINS_HTTPS_LISTEN_ADDRESS="{{ansible_hostname}}"
 
 
 ## Type:        integer(1:9)

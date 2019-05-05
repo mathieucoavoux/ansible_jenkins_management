@@ -1,0 +1,3 @@
+- name: "Stop Jenkins from script"
+  shell: |
+    {{jenkins_etc_directory}}/init.d/jenkins.sh stop

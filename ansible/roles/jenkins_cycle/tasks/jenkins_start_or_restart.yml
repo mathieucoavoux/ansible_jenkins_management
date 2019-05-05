@@ -1,0 +1,36 @@
+---
+- name: "Check jenkins current status"
+  include_tasks: "roles/jenkins_cycle/tasks/jenkins_status.yml"
+
+- name: "Fail if the status is unknown"
+  fail:
+    msg: "Jenkins is in an unknown state"
+  when: jenkins_current_status == "unknown"
+
+- name: "Check if Jenkins is restartable when it's already started"
+  include_tasks: "roles/jenkins_cycle/tasks/jenkins_is_restartable.yml"
+  when: jenkins_current_status == "started"
+
+- name: "Stop Jenkins when started and restartable"
+  include_tasks: "roles/jenkins_cycle/tasks/jenkins_graceful_stop.yml"
+  when: jenkins_current_status == "started" and jenkins_is_restartable == "yes"
+
+- name: "Start Jenkins for the first time if it wasn't install and stopped"
+  include_tasks: "roles/jenkins_cycle/tasks/jenkins_start_first_time.yml"
+  when: jenkins_is_installed == false and jenkins_current_status == "stopped"
+
+- name: "Start Jenkins if it was stopped or it was restartable"
+  include_tasks: "roles/jenkins_cycle/tasks/jenkins_start.yml"
+  when: jenkins_is_installed == true and ((jenkins_current_status == "started" and jenkins_is_restartable == "yes") or
+        jenkins_current_status == "stopped")
+
+- name: "Check Jenkins has restarted"
+  include_tasks: "roles/jenkins_cycle/tasks/jenkins_status_login.yml"
+
+
+- set_fact:
+    jenkins_has_restarted: "{%if (jenkins_current_status == 'started' and jenkins_is_restartable == 'yes') or jenkins_current_status == 'stopped'%}yes{%else%}no{%endif%}"
+
+- name: "Set flag to restart when required"
+  include_tasks: "roles/jenkins_cycle/tasks/jenkins_set_restart_flag.yml"
+  when: jenkins_current_status == "started" and jenkins_is_restartable == "no"

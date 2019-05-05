@@ -1,0 +1,11 @@
+---
+- name: "Set restart flag"
+  file:
+    path: "{{jenkins_home_directory}}/{{restart_flag}}"
+    state: touch
+
+- set_fact:
+    jenkins_restart_required: "yes"
+
+- debug:
+    msg: "Restart required: {{jenkins_restart_required}}"

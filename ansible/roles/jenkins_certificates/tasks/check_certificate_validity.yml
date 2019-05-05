@@ -2,7 +2,7 @@
 - name: "Save certificate"
   copy:
     content: "{{jenkins_certificates|json_query(jq_cert_cert)}}"
-    dest: "{{ENV_FOLDER}}/{{jenkins_cert_cert_name}}"
+    dest: "{{temp_folder.path}}/{{jenkins_cert_cert_name}}"
 
 
 - debug:
@@ -11,7 +11,7 @@
 #Take the expiration date, convert it to UNIX time and add 10 days and check if this is bigger than the current date
 - name: "Get current certificate expiration date"
   shell: |
-    [[ $(date -d"$(openssl x509 -noout -in {{ENV_FOLDER}}/{{jenkins_cert_cert_name}} -dates|grep ^notAfter|awk -F'=' '{print $2}')" +%s) -lt $(expr $(date +%s) + {{jenkins_seconds_expiration_notification}}) ]] && echo "EXPIRED" || echo "OK"
+    [[ $(date -d"$(openssl x509 -noout -in {{temp_folder.path}}/{{jenkins_cert_cert_name}} -dates|grep ^notAfter|awk -F'=' '{print $2}')" +%s) -lt $(expr $(date +%s) + {{jenkins_seconds_expiration_notification}}) ]] && echo "EXPIRED" || echo "OK"
   register: chk_current_expi
 
 - set_fact:

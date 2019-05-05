@@ -8,7 +8,6 @@
 # Input parameters:
 #     ENV_MASTER_TYPE: type of the master which shall be updated
 
-
 - name: "Check if file exists"
   stat:
     path: "configuration/jenkins_masters/{{ENV_MASTER_TYPE}}/configuration.yml"
@@ -41,3 +40,9 @@
 
 - set_fact:
     jenkins_is_installed: "{{chk_config.stat.exists}}"
+
+- name: "Create temporary folder"
+  tempfile:
+    state: directory
+    suffix: ansible
+  register: temp_folder

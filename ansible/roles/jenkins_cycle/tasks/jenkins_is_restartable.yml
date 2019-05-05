@@ -16,13 +16,13 @@
 
 - name: "Copy script"
   copy:
-    src: "roles/jenkins_update/files/check_date_time_range.sh"
-    dest: "{{ENV_FOLDER}}/check_date_time_range.sh"
+    src: "roles/jenkins_cycle/files/check_date_time_range.sh"
+    dest: "{{temp_folder.path}}/check_date_time_range.sh"
     mode: u+x
 
 - name: "Check the maintenance is in time range"
   shell: |
-    {{ENV_FOLDER}}/check_date_time_range.sh -s {{item.start_time}} -e {{item.end_time}} -r {{item.day|lower}} -k {{item.keyword|default('')|lower}} -w {{ansible_date_time.weekday|lower}}
+    {{temp_folder.path}}/check_date_time_range.sh -s {{item.start_time}} -e {{item.end_time}} -r {{item.day|lower}} -k {{item.keyword|default('')|lower}} -w {{ansible_date_time.weekday|lower}}
   with_items:
     - "{{maintenance_windows}}"
   register: chk_maintenance

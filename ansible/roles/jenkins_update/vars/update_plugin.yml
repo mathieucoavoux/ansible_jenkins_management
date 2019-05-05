@@ -1,4 +1,4 @@
 ---
 jq_plugin_installed: "results[?rc!=`0`].item"
 
-jenkins_cli_opts: "{%if ENV_SERVER_RESTART == 'yes' or jenkins_is_installed == false%}-restart{%endif%}"
+jenkins_cli_opts: "{%if (ENV_SERVER_RESTART is defined and ENV_SERVER_RESTART == 'yes') or jenkins_is_installed == false%}-restart{%endif%}"

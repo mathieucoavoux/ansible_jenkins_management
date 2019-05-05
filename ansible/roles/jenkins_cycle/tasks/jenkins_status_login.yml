@@ -1,0 +1,11 @@
+- name: "Wait until we see the login page or timeout after 5 minutes"
+  uri:
+    url: "{{jenkins_master_url}}"
+    return_content: yes
+  register: chk_url_login
+  until: chk_url_login.status == 200
+  retries: 30
+  delay: 10
+
+- set_fact:
+    jenkins_is_available: "{% if chk_url_login.status == 200 %}yes{%else%}no{%endif%}"

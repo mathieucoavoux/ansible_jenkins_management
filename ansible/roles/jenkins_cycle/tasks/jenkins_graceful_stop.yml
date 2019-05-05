@@ -1,0 +1,13 @@
+---
+- name: "Download Jenkins CLI"
+  get_url:
+    url: "{{jenkins_cli_url}}"
+    dest: "{{jenkins_home_directory}}/{{jenkins_cli_jar}}"
+
+#Do a graceful stop
+#If it fail then we will force
+- name: "Stop jenkins gracefully"
+  shell: |
+    {{jenkins_cli_cde}} safe-shutdown
+  register: chk_shutdown
+  ignore_error: yes

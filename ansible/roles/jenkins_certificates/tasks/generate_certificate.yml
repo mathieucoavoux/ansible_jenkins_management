@@ -1,6 +1,6 @@
 ---
 #Input parameters:
-#   ENV_FOLDER: folder where to generate certificate
+#   temp_folder.path: folder where to generate certificate
 #   ENV_COUNTRY: country name
 #   ENV_STATE: state
 #   ENV_LOCATION: location(city)
@@ -12,14 +12,14 @@
 
 - name: "Generate self-certificate"
   shell: |
-    openssl req -newkey rsa:{{jenkins_cert_rsa_size}} -nodes -keyout {{ENV_FOLDER}}/{{jenkins_cert_key_name}} -x509 \
-    -days {{jenkins_cert_validity}} -out {{ENV_FOLDER}}/{{jenkins_cert_cert_name}} \
+    openssl req -newkey rsa:{{jenkins_cert_rsa_size}} -nodes -keyout {{temp_folder.path}}/{{jenkins_cert_key_name}} -x509 \
+    -days {{jenkins_cert_validity}} -out {{temp_folder.path}}/{{jenkins_cert_cert_name}} \
     -subj "/C={{jenkins_cert_country}}/ST={{jenkins_cert_state}}/L={{jenkins_cert_location}}/O={{jenkins_cert_organization}}/OU={{jenkins_cert_unit}}/CN={{jenkins_cert_cn}}"
 
 #Push it to KMS
 - set_fact:
     jenkins_certificates:
       - hostname: "{{ansible_hostname}}"
-        cert: "{{lookup('file',ENV_FOLDER+'/'+jenkins_cert_cert_name)}}"
-        key: "{{lookup('file',ENV_FOLDER+'/'+jenkins_cert_key_name)}}"
+        cert: "{{lookup('file',temp_folder.path+'/'+jenkins_cert_cert_name)}}"
+        key: "{{lookup('file',temp_folder.path+'/'+jenkins_cert_key_name)}}"
         keystore_password: "{%if jenkins_certificates|json_query(jq_cert_keystore_password) != '' %}{{jenkins_certificates|json_query(jq_cert_keystore_password)}}{%else%}default_keystore_password{%endif%}"

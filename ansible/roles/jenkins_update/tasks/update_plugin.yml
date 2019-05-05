@@ -11,7 +11,7 @@
 
 - name: "Check if plugin {{item.name}} is installed"
   shell: |
-    {{java_home}}/bin/java -jar {{jenkins_home_directory}}/{{jenkins_cli_jar}} -s {{jenkins_master_url}} list-plugins {{item.name}}
+    {{jenkins_cli_cde}} list-plugins {{item.name}}
   ignore_errors: True
   register: chk_plugins
   with_items:
@@ -19,6 +19,14 @@
 
 - name: "Update or install {{item.name}}"
   shell: |
-    {{java_home}}/bin/java -jar {{jenkins_home_directory}}/{{jenkins_cli_jar}} -s {{jenkins_master_url}} install-plugin {{item.name}} {{jenkins_cli_opts}}
+    {{jenkins_cli_cde}} install-plugin {{item.name}} {{jenkins_cli_opts}}
   with_items:
     - "{{chk_plugins|json_query(jq_plugin_installed)}}"
+  register: do_install_plugin
+
+- name: "Set restart required when new plugin has been installed"
+  import_role:
+    name: jenkins_cycle
+  vars:
+    jenkins_set_restart_flag: "yes"
+  when: do_install_plugin is defined and do_install_plugin.results is defined and do_install_plugin.results[0] is defined

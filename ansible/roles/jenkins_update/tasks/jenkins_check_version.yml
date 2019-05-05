@@ -1,0 +1,8 @@
+---
+- name: "Check jenkins version"
+  shell: |
+    {{java_home}}/bin/java -jar {{jenkins_home_directory}}/{{jenkins_war}} --version
+  register: chk_jenkins_version
+
+- set_fact:
+    jenkins_update_required: "{% if chk_jenkins_version.stdout != jenkins_version %}yes{%else%}no{%endif%}"

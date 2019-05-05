@@ -1,0 +1,9 @@
+---
+- name: "Check if Jenkins is started"
+  shell: |
+    {{jenkins_etc_directory}}/init.d/jenkins.sh status
+  register: chk_jenkins_status
+  ignore_errors: yes
+
+- set_fact:
+    jenkins_current_status: "{%if chk_jenkins_status.stdout is match('STOPPED.*') %}stopped{%elif chk_jenkins_status.stdout is match('STARTED.*') %}started{%else%}unknown{%endif%}"

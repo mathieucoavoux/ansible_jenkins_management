@@ -15,8 +15,14 @@ jenkins_plugins:
     version: "1.11"
   - name: "job-dsl"
     version: "1.72"
+  - name: "audit-trail" #Keep a log of who performed particular Jenkins operations, such as configuring jobs.
+    version: "2.4"
+  - name: "plain-credentials"
+    version: "1.5"
+  - name: "cloudbees-folder"
+    version: "6.8"
 
-
+jenkins_root_folder: "Admins"
 
 filesystems:
   - name: "log"
@@ -42,12 +48,9 @@ filesystems:
   - name: "user_home"
     path: "/home/ec2-user"
 
-jenkins_credentials_store: "system::system:::jenkins"
-jenkins_credentials:
-  - domain_name: "domain1"
-    credentials:
-      - file_name: "secret1"
-        path: "/configuration/jenkins_masters/aws_demo/secrets.yml"
+jenkins_credential:
+  credential: "Core credential"
+  path: "/configuration/jenkins_masters/aws_demo/secrets.yml"
 
 jvm_configuration:
   launch_user: "ec2-user"

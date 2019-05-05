@@ -1,0 +1,8 @@
+---
+- copy:
+    src: "roles/jenkins_update/files/create_folder.groovy"
+    dest: "{{temp_folder.path}}/"
+
+- name: "Execute groovy script"
+  shell: |
+    {{jenkins_cli_cde}} -remoting groovy {{temp_folder.path}}/create_folder.groovy {{jenkins_root_folder}}

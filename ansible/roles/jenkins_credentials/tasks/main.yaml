@@ -1,0 +1,70 @@
+---
+#Author: Mathieu Coavoux
+#Created: 03-APR-2019
+#Description:
+##            Add or update a list of credentials in Jenkins. This can include vault password and ssh pass phrase
+##
+##            1-  Check if the domain exists. If this is not the case create it
+##            2-  Check if the credential exists and is up-to-date.
+##                We know that the credential is up-to-date by comparing the value of the description.
+##                The description must respect the following pattern  <credential_id>_<epoch_time>
+##            4-
+##                a) If the credential doesn't exist we create it
+##                b) If the credential exists but the description is not the same we update it
+##                c) If the credential exists and it match the pattern we do nothing
+#Input variables:
+##                jc_domain_name: The domain name where the credential is set
+##                jc_jenkins_store_id: the store name which contains the domain which contains the credential. Default value: system::system::jenkins
+##                jc_secret_file: The file where the secret is stored.
+##                                The variable storing the secret must comply the following pattern:
+##                                jc_jenkins_credentials:
+##                                  - name: "Credential name" #This is not use in Jenkins but just by Ansible
+##                                    id: "Credential id"
+##                                    description: "Unique description" #Each time the credential is updated a new description shall be generated
+##                                    value: "The secret"
+##                temp_folder.path: The directory where to put the scripts
+#Runtime variables:
+##                jenkins_masters:
+##                    name: the name of the jenkins master
+##                    hostname: the server name
+##                    url: Jenkins url. This variable is dynamically built based on the hostname. This could change to put a DNS CNAME name
+
+#Check if the secret file exists
+- name: "Check if file exists"
+  stat:
+    path: "{{jc_secret_file}}"
+  register: chk_secret
+
+- fail:
+    msg: "File {{jc_secret_file}} doesn't exist"
+  when: chk_secret is not defined or chk_secret.stat.exists != true
+
+#Sourcing secret
+##When we source secret of technologies we have the key from another encrypted file in our area
+- name: "Include jenkins secret file"
+  include_vars: "{{jc_secret_file}}"
+  no_log: yes
+
+#Download CLI jar
+- name: "Download Jenkins CLI"
+  get_url:
+    url: "{{jenkins_cli_url}}"
+    dest: "{{temp_folder.path}}/{{jenkins_cli_jar}}"
+
+#Copy wrapper
+- name: "Copy shell wrapper"
+  copy:
+    src: "roles/jenkins_credentials/files/jenkins_cli_wrapper.sh"
+    dest: "{{temp_folder.path}}/"
+    mode: u+x
+
+- name: "Copy update credential script"
+  copy:
+    src: "roles/jenkins_credentials/files/jenkins_credentials.py"
+    dest: "{{temp_folder.path}}/"
+
+#Script which take a list of credentials in parameter and return the status with the id
+- name: "Check if the secret exists"
+  shell:
+    python {{temp_folder.path}}/jenkins_credentials.py --action add_update --url {{jenkins_master_url}} --store {{jc_jenkins_store_id}} --domain {{jc_domain_name}} --list '{{jc_jenkins_credentials|to_json }}' --workspace {{temp_folder.path}}
+  #no_log: yes

@@ -1,0 +1,9 @@
+---
+#Check if a Jenkins store exists
+- name: "Check if a jenkins store exists"
+  shell: |
+    result=$({{java_home}}/bin/java -jar {{temp_folder.path}}/{{jenkins_cli_jar}} list-credentials {{jc_jenkins_store_id}} 2>&1) && echo "OK" || echo "KO"
+  register: chk_store
+
+- set_fact:
+    jenkins_store_exists: "{% if chk_store.stdout != 'OK' %}no{%else%}yes{%endif%}"
