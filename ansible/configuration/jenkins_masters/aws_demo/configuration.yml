@@ -50,7 +50,7 @@ filesystems:
 
 jenkins_credential:
   credential: "Core credential"
-  path: "/configuration/jenkins_masters/aws_demo/secrets.yml"
+  path: "configuration/jenkins_masters/aws_demo/secrets.yml"
 
 jvm_configuration:
   launch_user: "ec2-user"

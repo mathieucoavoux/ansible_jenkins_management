@@ -1,1 +1,23 @@
----
+jenkins:
+  systemMessage: "Jenkins configured automatically by Jenkins Configuration as Code plugin\n\n"
+  numExecutors: 0
+  scmCheckoutRetryCount: 2
+  mode: NORMAL
+
+  globalNodeProperties:
+    - envVars:
+        env:
+          - key: ROOT_FOLDER
+            value: TEAM1,TEAM2
+          - key: REPO_TEAM1_CONFIG
+            value: https://github.com/mathieucoavoux/jenkins_team1_config.git
+          - key: REPO_TEAM2_CONFIG
+              value: https://github.com/mathieucoavoux/jenkins_team1_config.git
+
+jobs:
+  - script: >
+      job('Kickstart') {
+          steps {
+              dsl(['projectA.groovy', 'projectB.groovy'])
+          }
+      }

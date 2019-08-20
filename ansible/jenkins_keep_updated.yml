@@ -1,0 +1,5 @@
+---
+- hosts: localhost
+  roles:
+    - jenkins_prerequisites
+    - jenkins_update

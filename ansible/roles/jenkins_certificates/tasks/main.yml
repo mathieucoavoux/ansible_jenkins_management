@@ -1,3 +1,6 @@
 ---
-- include_tasks: "roles/jenkins_certificates/tasks/keep_latest_certificate.yml"
-  when: keep_latest is defined and keep_latest == "yes"
+- block:
+  - include_tasks: "roles/jenkins_certificates/tasks/keep_latest_certificate.yml"
+    when: keep_latest is defined and keep_latest == "yes"
+  become: yes
+  become_user: "{{launch_user}}"

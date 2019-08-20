@@ -19,7 +19,7 @@
 #Push it to KMS
 - set_fact:
     jenkins_certificates:
-      - hostname: "{{ansible_hostname}}"
+      - hostname: "{{current_hostname}}"
         cert: "{{lookup('file',temp_folder.path+'/'+jenkins_cert_cert_name)}}"
         key: "{{lookup('file',temp_folder.path+'/'+jenkins_cert_key_name)}}"
         keystore_password: "{%if jenkins_certificates|json_query(jq_cert_keystore_password) != '' %}{{jenkins_certificates|json_query(jq_cert_keystore_password)}}{%else%}default_keystore_password{%endif%}"

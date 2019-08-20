@@ -28,7 +28,7 @@ jenkins_https_port: "{%if master_http_port != '' %}{{master_https_port}}{%else%}
 custom_channel: "{{jenkins_masters|json_query(jq_jm_default_channel)}}"
 jenkins_master_channel: "{%if custom_channel != '' %}{{custom_channel}}{%else%}{{default_channel}}{%endif%}"
 jenkins_default_port: "{%if jenkins_master_channel == 'https' %}{{jenkins_https_port}}{%else%}{{jenkins_http_port}}{%endif%}"
-jenkins_master_url: "{{jenkins_master_channel}}://{{ansible_hostname}}:{{jenkins_default_port}}{{jenkins_suffix_url}}"
+jenkins_master_url: "{{jenkins_master_channel}}://{{current_hostname}}:{{jenkins_default_port}}{{jenkins_suffix_url}}"
 jenkins_cli_url: "{{jenkins_master_url}}/{{jenkins_cli_suffix}}/{{jenkins_cli_jar}}"
 jenkins_cli_cde_prefix: "{{java_home}}/bin/java -jar {{jenkins_home_directory}}/{{jenkins_cli_jar}} -s {{jenkins_master_url}}"
 jenkins_cli_auth: "{%if jenkins_admin_name is defined and jenkins_admin_token is defined %}-auth {{jenkins_admin_name}}:{{jenkins_admin_token}}{%endif%}"

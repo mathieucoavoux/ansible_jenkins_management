@@ -73,7 +73,7 @@ JENKINS_PORT="{{jenkins_http_port}}"
 # IP address Jenkins listens on for HTTP requests.
 # Default is all interfaces (0.0.0.0).
 #
-JENKINS_LISTEN_ADDRESS="{{ansible_hostname}}"
+JENKINS_LISTEN_ADDRESS="{{current_hostname}}"
 
 ## Type:        integer(0:65535)
 ## Default:     ""
@@ -117,7 +117,7 @@ JENKINS_HTTPS_KEYSTORE_PASSWORD=""
 # IP address Jenkins listens on for HTTPS requests.
 # Default is disabled.
 #
-JENKINS_HTTPS_LISTEN_ADDRESS="{{ansible_hostname}}"
+JENKINS_HTTPS_LISTEN_ADDRESS="{{current_hostname}}"
 
 
 ## Type:        integer(1:9)

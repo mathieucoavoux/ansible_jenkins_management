@@ -8,18 +8,20 @@
 # Input parameters:
 #     ENV_MASTER_RESTARTABLE: default value False. If set to true Jenkins can restart at the end
 #     ENV_MASTER_TYPE: type of the master which shall be updated
+- block:
+  - include_tasks: "roles/jenkins_update/tasks/update_core.yml"
+    when: update_core is defined and update_core == "yes"
 
-- include_tasks: "roles/jenkins_update/tasks/update_core.yml"
-  when: update_core is defined and update_core == "yes"
+  - include_tasks: "roles/jenkins_update/tasks/update_plugin.yml"
+    when: update_plugin is defined and update_plugin == "yes"
 
-- include_tasks: "roles/jenkins_update/tasks/update_plugin.yml"
-  when: update_plugin is defined and update_plugin == "yes"
+  - include_tasks: "roles/jenkins_update/tasks/keep_jenkins_updated.yml"
+    when: keep_updated is defined and keep_updated == "yes"
 
-- include_tasks: "roles/jenkins_update/tasks/keep_jenkins_updated.yml"
-  when: keep_updated is defined and keep_updated == "yes"
+  - include_tasks: "roles/jenkins_update/tasks/jenkins_check_version.yml"
+    when: jenkins_check_version is defined and jenkins_check_version == "yes"
 
-- include_tasks: "roles/jenkins_update/tasks/jenkins_check_version.yml"
-  when: jenkins_check_version is defined and jenkins_check_version == "yes"
-
-- include_tasks: "roles/jenkins_update/tasks/jenkins_create_root_folder.yml"
-  when: jenkins_create_folder is defined and jenkins_create_folder == "yes"
+  - include_tasks: "roles/jenkins_update/tasks/jenkins_create_root_folder.yml"
+    when: jenkins_create_folder is defined and jenkins_create_folder == "yes"
+  become: yes
+  become_user: "{{launch_user}}"

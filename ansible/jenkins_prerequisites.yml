@@ -2,4 +2,3 @@
 - hosts: localhost
   roles:
     - jenkins_prerequisites
-  become: true

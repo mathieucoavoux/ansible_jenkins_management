@@ -1,8 +1,10 @@
 ---
-- import_tasks: "roles/jenkins_prerequisites/tasks/jenkins_os_users.yml"
-  when: ( jenkins_os_users is defined and jenkins_os_users == "yes" ) or
-        ( jenkins_deps is defined and jenkins_deps == "yes")
+- block:
+  - include_tasks: "roles/jenkins_prerequisites/tasks/jenkins_os_users.yml"
+    when: ( jenkins_os_users is defined and jenkins_os_users == "yes" ) or
+          ( jenkins_deps is defined and jenkins_deps == "yes")
 
-- import_tasks: "roles/jenkins_prerequisites/tasks/jenkins_fs.yml"
-  when: ( jenkins_fs is defined and jenkins_fs == "yes" ) or
-        ( jenkins_deps is defined and jenkins_deps == "yes")
+  - include_tasks: "roles/jenkins_prerequisites/tasks/jenkins_fs.yml"
+    when: ( jenkins_fs is defined and jenkins_fs == "yes" ) or
+          ( jenkins_deps is defined and jenkins_deps == "yes")
+  become: yes

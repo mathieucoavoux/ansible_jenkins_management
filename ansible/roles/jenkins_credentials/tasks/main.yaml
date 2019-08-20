@@ -29,42 +29,47 @@
 ##                    hostname: the server name
 ##                    url: Jenkins url. This variable is dynamically built based on the hostname. This could change to put a DNS CNAME name
 
-#Check if the secret file exists
-- name: "Check if file exists"
-  stat:
-    path: "{{jc_secret_file}}"
-  register: chk_secret
+- block:
+  #Check if the secret file exists
+  - name: "Check if file exists"
+    stat:
+      path: "{{jc_secret_file}}"
+    register: chk_secret
 
-- fail:
-    msg: "File {{jc_secret_file}} doesn't exist"
-  when: chk_secret is not defined or chk_secret.stat.exists != true
+  - fail:
+      msg: "File {{jc_secret_file}} doesn't exist"
+    when: chk_secret is not defined or chk_secret.stat.exists != true
 
-#Sourcing secret
-##When we source secret of technologies we have the key from another encrypted file in our area
-- name: "Include jenkins secret file"
-  include_vars: "{{jc_secret_file}}"
-  no_log: yes
+  #Sourcing secret
+  ##When we source secret of technologies we have the key from another encrypted file in our area
+  - name: "Include jenkins secret file"
+    include_vars: "{{jc_secret_file}}"
+    no_log: yes
+  delegate_to: localhost
 
-#Download CLI jar
-- name: "Download Jenkins CLI"
-  get_url:
-    url: "{{jenkins_cli_url}}"
-    dest: "{{temp_folder.path}}/{{jenkins_cli_jar}}"
+- block:
+  #Download CLI jar
+  - name: "Download Jenkins CLI"
+    get_url:
+      url: "{{jenkins_cli_url}}"
+      dest: "{{temp_folder.path}}/{{jenkins_cli_jar}}"
 
-#Copy wrapper
-- name: "Copy shell wrapper"
-  copy:
-    src: "roles/jenkins_credentials/files/jenkins_cli_wrapper.sh"
-    dest: "{{temp_folder.path}}/"
-    mode: u+x
+  #Copy wrapper
+  - name: "Copy shell wrapper"
+    copy:
+      src: "roles/jenkins_credentials/files/jenkins_cli_wrapper.sh"
+      dest: "{{temp_folder.path}}/"
+      mode: u+x
 
-- name: "Copy update credential script"
-  copy:
-    src: "roles/jenkins_credentials/files/jenkins_credentials.py"
-    dest: "{{temp_folder.path}}/"
+  - name: "Copy update credential script"
+    copy:
+      src: "roles/jenkins_credentials/files/jenkins_credentials.py"
+      dest: "{{temp_folder.path}}/"
 
-#Script which take a list of credentials in parameter and return the status with the id
-- name: "Check if the secret exists"
-  shell:
-    python {{temp_folder.path}}/jenkins_credentials.py --action add_update --url {{jenkins_master_url}} --store {{jc_jenkins_store_id}} --domain {{jc_domain_name}} --list '{{jc_jenkins_credentials|to_json }}' --workspace {{temp_folder.path}}
-  #no_log: yes
+  #Script which take a list of credentials in parameter and return the status with the id
+  - name: "Check if the secret exists"
+    shell:
+      python {{temp_folder.path}}/jenkins_credentials.py --action add_update --url {{jenkins_master_url}} --store {{jc_jenkins_store_id}} --domain {{jc_domain_name}} --list '{{jc_jenkins_credentials|to_json }}' --workspace {{temp_folder.path}}
+    #no_log: yes
+  become: yes
+  become_user: "{{launch_user}}"
