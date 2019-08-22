@@ -7,4 +7,8 @@
   - include_tasks: "roles/jenkins_prerequisites/tasks/jenkins_fs.yml"
     when: ( jenkins_fs is defined and jenkins_fs == "yes" ) or
           ( jenkins_deps is defined and jenkins_deps == "yes")
+
+  - include_tasks: "roles/jenkins_prerequisites/tasks/java_update.yml"
+    when: ( java_update is defined and java_update == "yes" ) or
+      ( jenkins_deps is defined and jenkins_deps == "yes")
   become: yes

@@ -1,21 +1,23 @@
 ---
-- name: "Check if we know that we will delete all"
-  stat:
-    path: "{{jenkins_home_directory}}/.ready_to_delete"
-  register: chk_ready
-  failed_when: chk_ready.stat.exists == False
+- block:
+  - name: "Check if we know that we will delete all"
+    stat:
+      path: "{{jenkins_home_directory}}/.ready_to_delete"
+    register: chk_ready
+    failed_when: chk_ready.stat.exists == False
 
-- name: "Stop Jenkins daemon"
-  include_role:
-    name: jenkins_cycle
-  vars:
-    jenkins_system_stop: "yes"
+  - name: "Stop Jenkins daemon"
+    include_role:
+      name: jenkins_cycle
+    vars:
+      jenkins_system_stop: "yes"
 
-- name: "Remove all FS"
-  file:
-    path: "{{item.path}}"
-    state: absent
-    owner: "{{launch_user}}"
-    group: "{{launch_group}}"
-  loop: "{{filesystems}}"
-  #add loop control to avoid to delete the /var
+  - name: "Remove all FS"
+    file:
+      path: "{{item.path}}"
+      state: absent
+      owner: "{{launch_user}}"
+      group: "{{launch_group}}"
+    loop: "{{filesystems}}"
+    #add loop control to avoid to delete the /var
+  become: yes

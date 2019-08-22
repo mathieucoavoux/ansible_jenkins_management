@@ -1,0 +1,18 @@
+---
+java_provider: "openjdk"
+java_version: "11.0.2"
+java_major_version: "{{java_version|regex_replace('(.*).[0-9]{1,2}.[0-9]{1,2}$','\\1') }}"
+
+query_java_url: "[?version == '{{java_version}}'].url|[0]"
+query_java_package: "[?version == '{{java_version}}'].package|[0]"
+
+java:
+  - provider: "openjdk"
+    version: "11.0.2"
+    url: "https://download.java.net/java/GA/jdk11/9/GPL"
+    package: "openjdk-11.0.2_linux-x64_bin.tar.gz"
+    architecture: "linux"
+
+java_home: "/usr/lib/jvm/java-{{java_version}}-{{java_provider}}"
+java_url: "{{java|json_query(query_java_url)}}/{{java|json_query(query_java_package)}}"
+java_package: "{{java|json_query(query_java_package)}}"

@@ -1,0 +1,21 @@
+---
+- name: "Check if directory exists"
+  stat:
+    path: "{{java_home}}"
+  register: check_java_home
+- block:
+  - name: "Create java home"
+    file:
+      path: "{{java_home}}"
+      state: directory
+
+  - name: "Download java"
+    get_url:
+      url: "{{java_url}}"
+      dest: "{{java_home}}"
+
+  - name: "Extract archive"
+    unarchive:
+      src: "{{java_home}}/{{java_package}}"
+      dest: "{{java_home}}/"
+  when: check_java_home is defined and check_java_home.stat is defined and check_java_home.stat.exists == True
