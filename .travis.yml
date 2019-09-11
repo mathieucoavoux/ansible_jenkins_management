@@ -2,7 +2,7 @@ language: python
 python:
   - "3.6"
 
-sudo: required
+#sudo: required
 
 install:
   - pip install ansible jmespath
