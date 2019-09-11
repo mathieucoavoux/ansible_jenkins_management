@@ -2,19 +2,8 @@ language: python
 python:
   - "3.6"
 
-#sudo: required
-
 install:
   - pip install ansible jmespath
 
 script:
   - ansible-playbook ./tests/test_prerequisites.yml
-
-#services:
-#  - docker
-
-#before_script:
-#  - docker build -t mathieucoavoux/ansible_jenkins .
-
-#script:
-#  - docker run mathieucoavoux/ansible_jenkins
