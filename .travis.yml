@@ -1,0 +1,12 @@
+language: python
+
+sudo: true
+
+services:
+  - docker
+
+before_script:
+  - docker build -t mathieucoavoux/ansible_jenkins .
+
+script:
+  - docker run mathieucoavoux/ansible_jenkins

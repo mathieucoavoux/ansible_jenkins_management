@@ -1,0 +1,12 @@
+- include_tasks: "../ansible/roles/jenkins_prerequisites/tasks/jenkins_os_users.yml"
+  vars:
+    launch_user: "user1"
+    launch_group: "group1"
+
+- shell: |
+    id -u user1 || echo KO
+  register: check_user
+
+- assert:
+    that:
+      - 'check_user.stdout != "KO"'
