@@ -12,6 +12,6 @@ install_ansible() {
 }
 
 
-install_pip
-install_ansible
+#install_pip
+#install_ansible
 ansible-playbook /root/tests/test_prerequisites.yml
