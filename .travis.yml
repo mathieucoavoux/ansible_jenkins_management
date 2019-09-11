@@ -11,7 +11,7 @@ script:
   - ansible-playbook ./tests/test_prerequisites.yml
 
 #services:
-  - docker
+#  - docker
 
 #before_script:
 #  - docker build -t mathieucoavoux/ansible_jenkins .
