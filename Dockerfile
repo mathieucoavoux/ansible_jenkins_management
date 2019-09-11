@@ -1,4 +1,4 @@
-FROM centos:7
+FROM python:latest
 
 ADD run.sh /root/
 RUN chmod +x /root/run.sh
