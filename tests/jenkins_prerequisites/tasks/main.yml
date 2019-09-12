@@ -50,7 +50,7 @@
 
 - include_tasks: "../ansible/roles/jenkins_prerequisites/tasks/jenkins_fs.yml"
 
-- shell: "[[ -d \"{{item.path }}\" ]] && echo {{item.name}} || echo KO"
+- shell: " stat --printf=%F {{item.path }} || echo KO"
   loop: "{{filesystems}}"
   register: check_fs
 
