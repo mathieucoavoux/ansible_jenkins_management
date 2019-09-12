@@ -1,3 +1,4 @@
+# Test user and group creation
 - include_tasks: "../ansible/roles/jenkins_prerequisites/tasks/jenkins_os_users.yml"
   vars:
     launch_user: "user1"
@@ -10,3 +11,51 @@
 - assert:
     that:
       - 'check_user.stdout != "KO"'
+
+- shell: |
+    grep ^group1: /etc/group || echo KO
+  register: check_group
+
+- assert:
+    that:
+      - 'check_group.stdout != "KO"'
+
+# Test directory creation
+- set_fact:
+    filesystems:
+      - name: "log"
+        path: "/var/log/jenkins"
+      - name: "etc"
+        path: "/opt/jenkins/etc"
+      - name: "etc_init"
+        path: "/opt/jenkins/etc/init.d"
+      - name: "etc_conf"
+        path: "/opt/jenkins/etc/conf"
+      - name: "etc_bin"
+        path: "/opt/jenkins/etc/bin"
+      - name: "etc_sysconfig"
+        path: "/opt/jenkins/etc/sysconfig"
+      - name: "cache"
+        path: "/opt/jenkins/cache"
+      - name: "home"
+        path: "/opt/jenkins/home"
+      - name: "var_run"
+        path: "/var/run"
+      - name: "tmp"
+        path: "/opt/jenkins/tmp"
+      - name: "user_home"
+        path: "/home/ec2-user"
+    launch_user: "user1"
+    launch_group: "group1"
+
+- include_tasks: "../ansible/roles/jenkins_prerequisites/tasks/jenkins_fs.yml"
+
+- shell: |
+    [[ -d {{item.path }} ]] && echo {{item.name}} || echo KO
+  loop: "{{filesystems}}"
+  register: check_fs
+
+- assert:
+    that:
+      - '{{item.stdout}} != "KO"'
+  loop: "{{check_fs.results}}"
