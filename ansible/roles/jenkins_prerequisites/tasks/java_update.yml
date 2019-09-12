@@ -18,4 +18,5 @@
     unarchive:
       src: "{{java_home}}/{{java_package}}"
       dest: "{{java_home}}/"
+      remote_src: yes
   when: check_java_home is defined and check_java_home.stat is defined and check_java_home.stat.exists == True

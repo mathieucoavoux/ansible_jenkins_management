@@ -4,21 +4,19 @@
     launch_user: "user1"
     launch_group: "group1"
 
-- shell: |
-    id -u user1 || echo KO
+- shell: "id -u user1 || echo KO"
   register: check_user
 
 - assert:
     that:
-      - 'check_user.stdout != "KO"'
+      - '"{{check_user.stdout}}" != "KO"'
 
-- shell: |
-    grep ^group1: /etc/group || echo KO
+- shell: "grep ^group1: /etc/group || echo KO"
   register: check_group
 
 - assert:
     that:
-      - 'check_group.stdout != "KO"'
+      - '"{{check_group.stdout}}" != "KO"'
 
 # Test directory creation
 - set_fact:
@@ -44,7 +42,7 @@
       - name: "tmp"
         path: "/opt/jenkins/tmp"
       - name: "user_home"
-        path: "/home/ec2-user"
+        path: "/home/user1"
     launch_user: "user1"
     launch_group: "group1"
 
@@ -58,3 +56,18 @@
     that:
       - '"{{item.stdout}}" != "KO"'
   loop: "{{check_fs.results}}"
+
+# Test to install java
+- set_fact:
+    java_home: "/home/user1"
+    java_url: "https://download.java.net/java/GA/jdk11/9/GPL/openjdk-11.0.2_linux-x64_bin.tar.gz"
+    java_package: "openjdk-11.0.2_linux-x64_bin.tar.gz"
+
+- include_tasks: "../ansible/roles/jenkins_prerequisites/tasks/java_update.yml"
+
+- shell: "stat --printf=%F {{java_home }}/*/bin/java || echo KO"
+  register: check_java
+
+- assert:
+    that:
+      - '"{{check_java.stdout}}" != "KO"'
