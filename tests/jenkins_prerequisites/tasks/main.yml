@@ -51,11 +51,11 @@
 - include_tasks: "../ansible/roles/jenkins_prerequisites/tasks/jenkins_fs.yml"
 
 - shell: |
-    [[ -d {{item.path }} ]] && echo {{item.name}} || echo KO
+    [[ -d "{{item.path }}" ]] && echo {{item.name}} || echo KO
   loop: "{{filesystems}}"
   register: check_fs
 
 - assert:
     that:
-      - '{{item.stdout}} != "KO"'
+      - '"{{item.stdout}}" != "KO"'
   loop: "{{check_fs.results}}"
