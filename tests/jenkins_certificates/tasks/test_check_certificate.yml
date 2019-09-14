@@ -1,0 +1,15 @@
+- set_fact:
+    jq_cert_cert: "[?hostname=='{{current_hostname}}'].cert|[0]"
+    jq_cert_key: "[?hostname=='{{current_hostname}}'].key|[0]"
+
+- include_tasks: "../ansible/roles/jenkins_certificates/tasks/check_certificates_exists.yml"
+
+- assert:
+    that:
+      - '{{jenkins_certificate_source_exists}} == True'
+
+- include_tasks: "../ansible/roles/jenkins_certificates/tasks/check_certificate_validity.yml"
+
+- assert:
+    that:
+      - '{{jenkins_cert_expired}} == False'
