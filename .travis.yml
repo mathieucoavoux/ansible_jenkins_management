@@ -7,3 +7,4 @@ install:
 
 script:
   - ansible-playbook ./tests/test_prerequisites.yml
+  - ansible-playbook ./tests/test_certificates.yml

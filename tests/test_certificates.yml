@@ -1,0 +1,6 @@
+---
+- hosts: localhost
+  connection: local
+  roles:
+    - jenkins_certificates
+  gather_facts: yes

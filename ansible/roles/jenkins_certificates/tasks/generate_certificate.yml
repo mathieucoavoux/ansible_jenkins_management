@@ -1,14 +1,14 @@
 ---
 #Input parameters:
 #   temp_folder.path: folder where to generate certificate
-#   ENV_COUNTRY: country name
-#   ENV_STATE: state
-#   ENV_LOCATION: location(city)
-#   ENV_ORGANIZATION: organization name
-#   ENV_UNIT: unit
-#   ENV_CN: common name
-#   ENV_VALIDITY: number of days before certificate expires
-#   ENV_RSA_SIZE: facultative
+#   jenkins_cert_country: country name
+#   jenkins_cert_state: state
+#   jenkins_cert_location: location(city)
+#   jenkins_cert_organization: organization name
+#   jenkins_cert_unit: unit
+#   jenkins_cert_cn: common name
+#   jenkins_cert_validity: number of days before certificate expires
+#   jenkins_cert_rsa_size: facultative
 
 - name: "Generate self-certificate"
   shell: |

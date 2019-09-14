@@ -1,0 +1,30 @@
+- set_fact:
+    jenkins_cert_country: "LU"
+    jenkins_cert_state: "LU"
+    jenkins_cert_location: "Luxembourg"
+    jenkins_cert_organization: "ComprensiveIT"
+    jenkins_cert_unit: "IT"
+    jenkins_cert_cn: "jenkins.comprehensiveit.fr"
+    jenkins_cert_validity: 365
+    jenkins_cert_rsa_size: 2048
+    jenkins_cert_key_name: certificate1.key
+    jenkins_cert_cert_name: certificate1.pem
+    current_hostname: "{{ansible_facts.hostname}}"
+
+- set_fact:
+    jq_cert_keystore_password: "[?hostname=='{{current_hostname}}'].keystore_password|[0]"
+
+- name: "Create temporary folder"
+  tempfile:
+    state: directory
+    suffix: ansible
+  register: temp_folder
+
+- include_tasks: "../ansible/roles/jenkins_certificates/tasks/generate_certificate.yml"
+
+- shell: "openssl x509 -text -noout -in {{temp_folder.path}}/{{jenkins_cert_cert_name}} |awk  -F'Issuer: ' '/.*Issuer.*/ { print $2 } '|sed -e 's/, /\\\//g' || echo KO"
+  register: check_cert
+
+- assert:
+    that:
+      - '"C={{jenkins_cert_country}}/ST={{jenkins_cert_state}}/L={{jenkins_cert_location}}/O={{jenkins_cert_organization}}/OU={{jenkins_cert_unit}}/CN={{jenkins_cert_cn}}" == "{{check_cert.stdout}}"'
