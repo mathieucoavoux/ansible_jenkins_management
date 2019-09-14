@@ -1,1 +1,9 @@
+- name: "Create temporary folder"
+  tempfile:
+    state: directory
+    suffix: ansible
+  register: temp_folder
+
 - include_tasks: test_generate_certificate.yml
+
+#- include_tasks: test_check_certificate.yml
