@@ -21,4 +21,4 @@
 
 - assert:
     that:
-      - '"C={{jenkins_cert_country}}, ST={{jenkins_cert_state}}/L={{jenkins_cert_location}}, O={{jenkins_cert_organization}}, OU={{jenkins_cert_unit}}, CN={{jenkins_cert_cn}}" == "{{check_cert.stdout}}"'
+      - '"C={{jenkins_cert_country}}, ST={{jenkins_cert_state}}, L={{jenkins_cert_location}}, O={{jenkins_cert_organization}}, OU={{jenkins_cert_unit}}, CN={{jenkins_cert_cn}}" == "{{check_cert.stdout}}"'
