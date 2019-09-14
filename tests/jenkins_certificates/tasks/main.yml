@@ -4,6 +4,8 @@
     suffix: ansible
   register: temp_folder
 
+- include_vars: "../ansible/roles/jenkins_certificates/vars/main.yml"
+
 - include_tasks: test_generate_certificate.yml
 
 - include_tasks: test_check_certificate.yml
