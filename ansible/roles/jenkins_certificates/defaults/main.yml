@@ -1,0 +1,4 @@
+jenkins_deps: yes
+keep_updated: yes
+keep_latest: yes
+restart_flag: no

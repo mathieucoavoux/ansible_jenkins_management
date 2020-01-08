@@ -1,4 +1,9 @@
 #This can be reviewed to take the certificate from a KMS or somewhere else
 
 - set_fact:
-    jenkins_certificate_source_exists: "{%if jenkins_certificates|json_query(jq_cert_cert) != '' and jenkins_certificates|json_query(jq_cert_key) != ''%}true{%else%}false{%endif%}"
+    jenkins_certificate_cert: "{{jenkins_certificates|json_query(jq_cert_cert)}}"
+    jenkins_certificate_key: "{{jenkins_certificates|json_query(jq_cert_key)}}"
+
+
+- set_fact:
+    jenkins_certificate_source_exists: "{%if jenkins_certificate_cert is defined and jenkins_certificate_cert != '' and jenkins_certificate_key is defined and jenkins_certificate_key != ''%}true{%else%}false{%endif%}"

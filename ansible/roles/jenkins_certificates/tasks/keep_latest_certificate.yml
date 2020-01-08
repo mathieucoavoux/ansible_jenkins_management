@@ -8,8 +8,8 @@
 
 #Generate certificate when it doesn't exist or is expired
 - include_tasks: "roles/jenkins_certificates/tasks/generate_certificate.yml"
-  when: jenkins_certificate_source_exists == "false" or
-        ( jenkins_cert_expired is defined and jenkins_cert_expired == "true")
+  when: not jenkins_certificate_source_exists or
+        ( jenkins_cert_expired is defined and jenkins_cert_expired)
 
 #Check if keystore exists
 - include_tasks: "roles/jenkins_certificates/tasks/check_keystore_exists.yml"
@@ -21,7 +21,7 @@
 #Generate keystore if it doesn't exists or if the certificate doesn't match
 - include_tasks: "roles/jenkins_certificates/tasks/generate_keystore.yml"
   when: jenkins_certificate_file == "absent" or
-      ( jenkins_cert_changed is defined and jenkins_cert_changed == "true")
+      ( jenkins_cert_changed is defined and jenkins_cert_changed )
 
 #Check if keystore is configured or update it
 - include_tasks: "roles/jenkins_certificates/tasks/check_keystore_configured.yml"
